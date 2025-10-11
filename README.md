@@ -1,5 +1,5 @@
 # 🚗 Vehicle Silhouette Classification for Prospect Auto
-### 🎯 Project Goal
+### 🎯 Project Goal 
 The primary goal of this project is to develop and evaluate a robust multiclass classification model capable of accurately distinguishing between three distinct vehicle types—Bus, Van, and Car—based solely on their two-dimensional geometric silhouettes. This model will be used by "Prospect Auto" repair shops to automate initial vehicle identification.
 
 ## 🚀 Technical Context
