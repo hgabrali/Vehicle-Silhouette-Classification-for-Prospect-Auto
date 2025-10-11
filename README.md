@@ -62,3 +62,5 @@ This project follows a standard supervised machine learning workflow, focusing o
 
 ### 💻 Where to Work
 This project is best executed in a flexible environment like Google Colab or a Jupyter Notebook.
+
+# 📚 Resources
