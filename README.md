@@ -3,7 +3,7 @@
 The primary goal of this project is to develop and evaluate a robust multiclass classification model capable of accurately distinguishing between three distinct vehicle types—Bus, Van, and Car—based solely on their two-dimensional geometric silhouettes. This model will be used by "Prospect Auto" repair shops to automate initial vehicle identification.
 
 ## 🚀 Technical Context
-
+ 
 This repository hosts a practical implementation project within the **Master School Supervised Learning curriculum**. The focus is on applying a structured machine learning pipeline to a real-world multiclass classification problem.
 
 ---
