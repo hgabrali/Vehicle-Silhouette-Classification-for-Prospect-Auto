@@ -18,6 +18,8 @@ This repository hosts a practical implementation project within the **Master Sch
 
 The dataset utilizes **2D geometric features** extracted from vehicle silhouettes viewed from various angles. All features are continuous and numerical.
 
+[Statlog (Vehicle Silhouettes)[(https://archive.ics.uci.edu/dataset/149/statlog+vehicle+silhouettes)
+
 ---
 
 | Feature Type | Value Range | Details ||
