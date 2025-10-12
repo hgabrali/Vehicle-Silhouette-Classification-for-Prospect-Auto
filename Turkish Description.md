@@ -4,7 +4,7 @@ Bu proje, "Prospect Auto" için gövde özelliklerine (silhouette features) daya
 
 # 🇹🇷 Turkish Description: Content Summary
 
-This file, named `Turkish description`, serves as an internal reference and quick summary document for the project's key concepts.
+##### * This file, named `Turkish description`, serves as an internal reference and quick summary document for the project's key concepts.
 
 ## 📝 Purpose and Rationale
 
