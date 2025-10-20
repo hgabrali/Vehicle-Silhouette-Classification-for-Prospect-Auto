@@ -165,6 +165,35 @@ The 18 features can be broadly categorized into three main groups based on their
     * **Hypothesis:** These distinct peaks almost certainly correspond to the different **vehicle classes** (`car`, `bus`, `van`). For example, one peak in `elongatedness` might represent 'car' and 'van', while the other peak represents 'bus'.
     * **Implication:** These features are **excellent candidates for classification**. They inherently contain information that separates the target classes and will likely be assigned high importance by machine learning models.
 
+* **Density Plots:**
+
+<img width="955" height="619" alt="image" src="https://github.com/user-attachments/assets/a45191e7-ac7a-4ce3-a410-99ec8939c52e" />
+
+## 🌊 Graphical Univariate Analysis: Density Plots (KDE)
+
+These Kernel Density Estimation (KDE) plots provide a smoothed, continuous alternative to histograms. They help to more clearly visualize the probability density of each feature, confirming the distributional shapes, skewness, and modality (number of peaks) identified in the previous analysis.
+
+### 🔍 Key Observations from Density Plots:
+
+The density plots confirm the three primary distribution types found in the dataset:
+
+* **🔔 1. Unimodal & Symmetric (Normal or Near-Normal)**
+    * **Features:** `circularity`, `distance_circularity`, `pr.axis_rectangularity`, `max.length_rectangularity`, `scaled_radius_of_gyration`.
+    * **Analysis:** These plots show a clear, single, bell-shaped curve. This confirms they are symmetrically distributed around a central mean value, reinforcing that they are "well-behaved" features with no significant skew.
+
+* **📈 2. Skewed (Asymmetric)**
+    * **Features:**
+        * **Right-Skewed:** `radius_ratio`, `pr.axis_aspect_ratio`, `max.length_aspect_ratio`, `skewness_major`, `skewness_minor`, `kurtosis_minor`.
+        * **Left-Skewed:** `compactness`, `kurtosis_major`.
+    * **Analysis:** The smooth density curves make the asymmetric nature of these features obvious. The plots show a high concentration of data (a high peak) on one side, followed by a long, low "tail" on the other. This visual confirms the skewness and corresponds directly to the outliers we observed in the box plots.
+
+* **⛰️ 3. Bimodal and Multimodal (Two or More Peaks)**
+    * **Features:** `scatter_ratio`, `elongatedness`, `scaled_variance_major`, `scaled_variance_minor`, `hollows_ratio`.
+    * **Analysis:** This is the most critical insight, and the density plots make it exceptionally clear. These features do not follow a single distribution. Instead, they show two (or more) distinct peaks.
+    * **Hypothesis:** These peaks strongly represent the different **vehicle classes** (`car`, `bus`, `van`) being "mixed" together in the overall dataset.
+    * **Implication:** As seen in the box plots, these features have the highest discriminatory power. The `scaled_variance_minor` plot, with its multiple complex peaks, looks particularly rich in information that could help separate all three classes.
+
+
 
 ---
 
