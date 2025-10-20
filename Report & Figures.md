@@ -1,6 +1,30 @@
-# 📈 Report & Figures
+## 📊 Report & Figures
 
-This section is dedicated to presenting the final results, key findings, and performance evaluation of the project. A well-structured reporting section ensures transparency and easy verification of the model's success.
+This section details the data selection process, initial data preparation, and subsequent analyses performed for this project.
+
+### 🗃️ Data Source & Preparation
+
+For this project, two versions of the "Statlog (Vehicle Silhouettes)" dataset were evaluated to ensure the most robust and clean data source was used.
+
+1.  **Original Raw Data (Downloaded from UCI Repository):**
+    * **Source:** Direct download from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/149/statlog+vehicle+silhouettes).
+    * **Characteristics:** This dataset was "header-less," meaning it did not contain column names.
+    * **Loading:** Upon inspection, all 19 columns were loaded as numerical data types (`int64`). The target variable (the 19th column) was found to be numerically encoded (e.g., `0`, `1`, `2`).
+    * **Required Preprocessing:** This version required two significant manual cleaning steps:
+        1.  Manually assigning a list of 19 column names based on the dataset's documentation.
+        2.  Manually mapping the numerical target variable to its corresponding categorical string labels (e.g., `{0: 'van', 1: 'car', 2: 'bus'}`) to be used in classification.
+
+2.  **Master School Data (`vehicle.csv`):**
+    * **Source:** Provided directly by the Master School.
+    * **Characteristics:** This dataset is a clean, "headered" CSV file, meaning it includes column names.
+    * **Loading:** The data was loaded correctly with 18 numerical feature columns (`int64`) and one categorical target column (`object`). The `class` column already contained the explicit, human-readable string labels: `'van'`, `'car'`, and `'bus'`.
+    * **Required Preprocessing:** The primary data-cleaning step (mapping the target variable) was *not* required. The only minor adjustment made was renaming a few feature columns that had ambiguous names in the file (e.g., `scaled_variance.1`, `skewness_about.1`) to more descriptive names (e.g., `scaled_variance_minor`, `skewness_minor`) for better readability during analysis.
+
+### 🎯 Final Dataset Selection
+
+**This project was developed and executed using the `vehicle.csv` dataset provided by the Master School.**
+
+This file was chosen as the definitive data source because it represents a cleaner, pre-processed version of the data. This choice eliminated ambiguity in the target variable and streamlined the data-loading phase, allowing for a more direct and reliable focus on Exploratory Data Analysis (EDA) and model building.s.
 
 ---
 
