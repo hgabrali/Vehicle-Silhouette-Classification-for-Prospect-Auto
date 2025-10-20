@@ -424,9 +424,11 @@ This phase of the analysis examines the relationships between two or more variab
     * 2️⃣ **Principal Component Analysis (PCA):** Apply PCA to the scaled data to compute the new components (PC1, PC2, PC3, ...).
     * 3️⃣ **2D Visualization:** Create a single 2D scatter plot (PC1 vs. PC2), coloring the points by `class`, to visualize the *entire* dataset's class separation in just two dimensions.
 
+# 🚨🚨🚨🚨🚨🚨🚨 ASK!!!!!!!!!🚨🚨🚨🚨🚨🚨🚨
 
 ## 🌀 Multivariate Analysis: PCA Explained Variance
 
+<img width="1806" height="400" alt="image" src="https://github.com/user-attachments/assets/40714926-ff1f-4c0c-9c4f-081a7845356a" />
 
 
 
