@@ -68,5 +68,6 @@ This project is best executed in a flexible environment like Google Colab or a J
 # 📚 Resources
 
 * [EDA](https://github.com/hgabrali/EDA)
+* [PCA](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html)
 * [Masterschool-Math-Foundation](https://github.com/hgabrali/Masterschool-Math-Foundation)
 * [Machine-Learning](https://github.com/hgabrali/Machine-Learning)
