@@ -165,6 +165,7 @@ The 18 features can be broadly categorized into three main groups based on their
     * **Hypothesis:** These distinct peaks almost certainly correspond to the different **vehicle classes** (`car`, `bus`, `van`). For example, one peak in `elongatedness` might represent 'car' and 'van', while the other peak represents 'bus'.
     * **Implication:** These features are **excellent candidates for classification**. They inherently contain information that separates the target classes and will likely be assigned high importance by machine learning models.
 
+
 ---
 
 ##### 3.2.1.3 Bivariate Analysis (Two Variables) 🔗
@@ -174,6 +175,54 @@ Examines the relationship between any two variables in the dataset.
 * **Goal:** Understand how features co-vary and identify potential correlations or dependencies that can inform **Feature Selection** or **Feature Engineering**.
 * **Techniques & Graphs:** Correlation Matrices (Heatmaps), Scatter Plots.
 * **Graph Required:** A **Correlation Heatmap** to visualize linear relationships between all feature pairs.
+
+* **Box Plots  by Class:**
+
+<img width="985" height="628" alt="image" src="https://github.com/user-attachments/assets/ab61098a-27d3-406e-aef0-3fde2044061f" />
+
+While our analysis plan started with univariate analysis, this section transitions into **bivariate analysis**. By plotting each numerical feature *against* the categorical `class` variable, we are no longer looking at features in isolation. Instead, we are actively investigating the relationship between two variables to find out which features are most effective at discriminating between `bus`, `car`, and `van`.
+
+### 🔍 Key Insights from Box Plots by Class
+
+The 18 box plots reveal how the distribution (median, interquartile range (IQR), and outliers) of each feature differs across the three vehicle classes.
+
+* **1. High Discriminatory Power (Strong Separators):**
+    * **Features:** `scatter_ratio`, `elongatedness`, `scaled_variance_major`, `scaled_variance_minor`.
+    * **Analysis:** These are the most valuable features for classification. Their box plots show a clear separation between the classes.
+    * **Example:** For `elongatedness`, the 'bus' class has a significantly lower and more compact range of values compared to 'car' and 'van', which have higher and overlapping values. Similarly, `scaled_variance_minor` shows that the 'car' class has a much wider and higher-value distribution than 'bus' or 'van'.
+
+* **2. Moderate Discriminatory Power (Some Separation):**
+    * **Features:** `compactness`, `distance_circularity`, `radius_ratio`, `pr.axis_rectangularity`, `max.length_rectangularity`.
+    * **Analysis:** These features show a noticeable difference in medians or ranges, but with significant overlap between at least two classes.
+    * **Example:** For `compactness`, the 'bus' class tends to have a higher median value than 'car' or 'van', but the IQRs (the boxes) overlap, suggesting this feature alone is not enough to separate them.
+
+* **3. Low Discriminatory Power (Weak Separators):**
+    * **Features:** `circularity`, `pr.axis_aspect_ratio`, `max.length_aspect_ratio`, `scaled_radius_of_gyration`, `skewness_major`, `skewness_minor`, `kurtosis_minor`, `kurtosis_major`, `hollows_ratio`.
+    * **Analysis:** These features are less useful for classification. Their box plots (median, 25th, and 75th percentiles) are nearly identical across all three vehicle classes.
+    * **Example:** `hollows_ratio` shows almost the same median and IQR for `bus`, `car`, and `van`, indicating it provides little to no information for distinguishing between them.
+
+---
+
+### ⚠️ The Role and Impact of Outliers
+
+The individual points ($\cdot$) plotted beyond the "whiskers" of the boxes are **outliers**. These are data points that fall far outside the expected range of the data (specifically, more than 1.5 times the Interquartile Range above the 3rd quartile or below the 1st quartile).
+
+In our dataset, features like `radius_ratio`, `pr.axis_aspect_ratio`, and `max.length_aspect_ratio` show a significant number of outliers, especially for the 'car' class.
+
+The impact of these outliers can be both negative and positive:
+
+#### ⛔ Negative Contributions (Why they can be problematic)
+
+1.  **Distort Statistical Summaries:** Outliers can drastically skew the `mean` (ortalama) and `standard deviation` (standart sapma). This is why the `median` (the line in the box) is a more *robust* measure of central tendency.
+2.  **Bias Model Training:** Many machine learning models (like Linear Regression, Logistic Regression, and $k$-Means) are sensitive to outliers. A single extreme value can pull the decision boundary or cluster center in its direction, leading to a less accurate model for the *majority* of the data.
+3.  **Impact Feature Scaling:** If using `MinMaxScaler` (scaling data between 0 and 1), a single outlier will become the '1' or '0', forcing all other "normal" data into a very small range (e.g., [0.1, 0.3]). This reduces the model's ability to see differences in the normal data. `StandardScaler` (Z-score) is less affected but still impacted.
+
+#### ✅ Positive Contributions (Why they are valuable)
+
+1.  **Represent True Variability:** Outliers are not always errors. In our data, the large number of outliers in the 'car' class (e.g., in `radius_ratio`) strongly suggests that the 'car' category is **inherently more diverse** than the 'bus' or 'van' categories. It likely includes hatchbacks, sedans, and sports cars, all with different silhouette properties. Removing these outliers would mean removing true information about the 'car' class.
+2.  **Provide Domain Insights:** An outlier might represent a unique case (e.g., a "head-on" or "rear" view of a vehicle, which looks very different from a side profile) or a data collection anomaly. Investigating them can lead to a deeper understanding of the problem.
+3.  **Test Model Robustness:** The presence of outliers forces us to choose more *robust* models. Tree-based models (like **Decision Trees** and **Random Forest**) are naturally immune to the impact of outliers. Robust scaling methods (like `RobustScaler`) can also be used to mitigate their negative impact.
+
 
 ---
 
