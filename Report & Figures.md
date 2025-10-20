@@ -324,13 +324,13 @@ This table provides a numerical summary of the differences observed visually in 
 
 This table serves as a **numerical summary of the Box Plots**. It quantitatively confirms the differences we saw visually, providing clear evidence of which features are most important for classifying the vehicles.
 
----
-
 ### 🧐 Key Quantitative Insights:
 
 * **`elongatedness`:** The mean value for `bus` (33.80) is significantly lower than for `car` (43.12) or `van` (40.78). This confirms it as a powerful separator.
 * **`scatter_ratio` & `scaled_variance_minor`:** The `bus` class has exceptionally high mean values in these features (203.63 & 612.34) compared to the `car` class (142.29 & 295.33), which has the lowest.
 * **`hollows_ratio`:** The mean values are extremely close for all three classes (`bus`: 194.29, `car`: 197.64, `van`: 194.81), confirming this feature has very low discriminatory power.
+
+---
 
 * **Pair Plot:**
 
@@ -379,36 +379,64 @@ This is the most important chart in the matrix.
 
 ---
 
-##### 3.2.1.4 Multivariate Analysis (Multiple Variables) 🌐
+##### 3.2.1.4 ## 🔬 Bivariate & Multivariate Analysis
 
-Examines the relationships among three or more variables simultaneously. This is often the most insightful part of EDA as real-world phenomena involve complex interactions.
+This phase of the analysis examines the relationships between two or more variables simultaneously. This is often the most insightful part of EDA, as it uncovers interactions, correlations, and the features that best separate the target classes.
 
-* **Goal:** Explore complex interactions, hidden patterns, and conditional relationships (e.g., how the relationship between feature A and feature B changes based on the vehicle `class`).
-* **Techniques & Graphs:** Pair Plots (Colored by Target Class), Bubble Charts.
+---
 
-##### 3.2.1.4.1. Numerical vs Numerical (N vs N)
+### 1. Categorical vs. Numerical (C vs. N)
 
-Analyzing the relationship between two continuous variables.
+* **Analysis:** Investigating how a continuous numerical feature is distributed across the different categories of the `class` variable.
+* **Goal:** To determine if the mean or variance of a feature significantly differs across vehicle classes. This confirms the feature's **discriminative power**.
+* **Techniques Used:**
+    * ✅ **Box Plots (Grouped by `class`):** We *completed* this (`feature_boxplots_by_class.png`). This visually showed strong separators (like `elongatedness`) and weak separators (like `hollows_ratio`).
+    * ✅ **Grouped Mean/Median:** We *completed* this (`df_veh.groupby('class').mean()`). This provided the exact numerical values to confirm the visual findings from the box plots.
 
-* **Visualizations & Graphs:** Scatter Plots, Pair Plots.
-* **Metrics:** Pearson's $r$ (Correlation Coefficient), Covariance.
-* **Insight:** Detecting linear or non-linear associations, which is crucial for regression modeling (if the target were continuous) and identifying **multicollinearity** (highly correlated features that may destabilize some ML models).
+---
 
-##### 3.2.1.4.1.2. Categorical vs Categorical (C vs C)
+### 2. Numerical vs. Numerical (N vs. N)
 
-Analyzing the relationship between two discrete/group variables. (In this dataset, only one categorical variable, the `class`, is present, limiting this direct analysis).
+* **Analysis:** Investigating the relationship between two continuous numerical features.
+* **Goal:** To detect linear associations, which is crucial for identifying **multicollinearity** (highly correlated features that provide redundant information).
+* **Techniques Used:**
+    * ✅ **Correlation Coefficient (Pearson's r):** We *completed* this calculation for all 18 features.
+    * ✅ **Heatmap Visualization:** We *completed* this (`correlation_heatmap.png`). This allowed us to visually identify strong positive (red) and negative (blue) correlation blocks.
 
-* **Visualizations & Graphs:** Stacked Bar Charts, Grouped Bar Charts.
-* **Metrics:** Chi-Square Test, Contingency Tables, Cramer's $V$.
-* **Insight:** Testing for statistical independence between categories.
+---
 
-#####  3.2.1.4.3. Categorical vs Numerical (C vs N)
+### 3. Multivariate Analysis (N vs. N vs. C)
 
-Analyzing how a continuous variable is distributed across different categories of the discrete `class` variable.
+* **Analysis:** Examining the complex, conditional relationship of how the association between two numerical features (A and B) changes based on a third, categorical variable (C).
+* **Goal:** To find combinations of features that can separate the classes more effectively than any single feature alone.
+* **Techniques Used:**
+    * ✅ **Pair Plots (Colored by Target Class):** We *completed* this (`pairplot_key_features.png`).
+    * **Insight:** This was highly successful. We proved that the combination of `elongatedness` and `scatter_ratio` creates distinct, separable clusters for `bus`, `car`, and `van`, even though `car` and `van` were heavily overlapped in 1D plots.
 
-* **Visualizations & Graphs:** Box Plots (Grouped by Vehicle Class), Violin Plots.
-* **Metrics:** ANOVA (Analysis of Variance), T-tests, Grouped Mean/Median.
-* **Insight:** Determining if the **mean or variance of a feature significantly differs across vehicle classes**. This confirms the feature's **discriminative power** for the classification task.
+---
+
+### 4. Multivariate Dimensionality Reduction (PCA)
+
+* **Analysis:** A capstone multivariate technique to address the two main challenges identified in our dataset: high dimensionality (18 features) and high multicollinearity.
+* **Goal:** To transform the 18 highly-correlated original features into a small set of new, **uncorrelated** features called **Principal Components (PCs)**, while retaining the maximum amount of information (variance) from the original data.
+* **Techniques To Be Performed:**
+    * 1️⃣ **Standard Scaling:** PCA is highly sensitive to feature scales. We *must* scale all 18 features (e.g., using `StandardScaler`) before applying PCA.
+    * 2️⃣ **Principal Component Analysis (PCA):** Apply PCA to the scaled data to compute the new components (PC1, PC2, PC3, ...).
+    * 3️⃣ **2D Visualization:** Create a single 2D scatter plot (PC1 vs. PC2), coloring the points by `class`, to visualize the *entire* dataset's class separation in just two dimensions.
+
+
+## 🌀 Multivariate Analysis: PCA Explained Variance
+
+
+
+
+
+---
+
+### 5. Categorical vs. Categorical (C vs. C)
+
+* **Analysis:** Investigating the relationship between two discrete/group variables.
+* **Status:** **Not Applicable (N/A).** As noted, this dataset contains only one categorical variable (`class`). Therefore, this specific type of bivariate analysis is not relevant to our project.
 
 ---
 
