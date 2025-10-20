@@ -80,14 +80,45 @@ Exploratory Data Analysis (EDA) is the cornerstone of understanding the dataset 
 
 ###### 3.2.1.1 Non-Graphical Analysis 🔢
 
-This involves calculating summary statistics for the dataset without relying on plots or charts, providing a numerical summary of the data's central tendency, dispersion, and shape.
+This section covers the initial quantitative inspection of the dataset, focusing on descriptive statistics and data integrity.
 
-| Metric Type | Examples | Purpose | Initial Observation (Based on `df.describe().T`) |
-| :--- | :--- | :--- | :--- |
-| **Central Tendency** | Mean, Median (`50%`) | Finding the "typical" value. | **PR.AXIS ASPECT RATIO** (Mean $\approx$ 61, Median = 61) shows symmetry. **SCALED VARIANCE ALONG MINOR AXIS** (Mean $\approx$ 439, Median = 363) suggests **right skewness**. |
-| **Dispersion** | Range, Std. Deviation | Measuring the spread of data. | **SCALED VARIANCE ALONG MINOR AXIS** ($\text{Std} \approx 176$) has the highest variability, confirming the vast scale differences. |
-| **Shape** | Skewness, Kurtosis | Describing the symmetry and peakedness of the distribution. | Several features like `SKEWNESS ABOUT MAJOR AXIS` and `KURTOSIS ABOUT MINOR AXIS` show values far from zero, confirming **non-Normal distributions** and the presence of **outliers/heavy tails**. |
-| **Frequency Tables** | Counts, Percentages | Summary for categorical variables. | The **Target Class Distribution** shows 4 major classes (`saab`, `bus`, `opel`, `van`) with balanced counts ($\approx 200$), and **one highly imbalanced class** (`204`) with only 1 instance. |
+###### 🔬 Feature Scale and Variability Analysis
+
+A statistical summary of the 18 numerical features provides critical insights into their scale, central tendency, and dispersion. This is a foundational step before any data visualization or modeling.
+
+* Number of duplicate rows: 0
+
+**Data Integrity:** The check for duplicate rows returned 0. This indicates that the dataset is clean in terms of redundant entries, and all 846 instances are unique.
+
+**Descriptive Statistics Table:**
+
+| | compactness | circularity | distance_circularity | radius_ratio | pr.axis_aspect_ratio | max.length_aspect_ratio | scatter_ratio | elongatedness | pr.axis_rectangularity | max.length_rectangularity | scaled_variance_major | scaled_variance_minor | scaled_radius_of_gyration | skewness_major | skewness_minor | kurtosis_minor | kurtosis_major | hollows_ratio |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **count** | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 | 846.00 |
+| **mean** | 93.68 | 44.86 | 82.09 | 168.94 | 61.69 | 8.57 | 168.84 | 40.93 | 20.58 | 147.99 | 188.63 | 361.35 | 174.71 | 72.46 | 6.38 | 12.60 | 188.93 | 195.63 |
+| **std** | 8.23 | 6.17 | 15.77 | 33.47 | 7.89 | 4.60 | 33.25 | 7.81 | 2.59 | 14.52 | 31.39 | 176.51 | 32.55 | 7.49 | 4.92 | 8.93 | 6.16 | 7.44 |
+| **min** | 73.00 | 33.00 | 40.00 | 104.00 | 48.00 | 2.00 | 112.00 | 26.00 | 17.00 | 118.00 | 131.00 | 184.00 | 112.00 | 59.00 | 0.00 | 0.00 | 176.00 | 181.00 |
+| **25%** | 87.00 | 40.00 | 70.00 | 141.00 | 57.00 | 7.00 | 146.25 | 36.00 | 19.00 | 137.00 | 167.00 | 318.25 | 149.00 | 67.00 | 2.00 | 5.00 | 184.00 | 190.25 |
+| **50%** | 93.00 | 44.00 | 80.00 | 167.00 | 61.00 | 8.00 | 157.00 | 40.00 | 20.00 | 146.00 | 178.50 | 363.50 | 173.50 | 72.00 | 6.00 | 11.00 | 188.00 | 197.00 |
+| **75%** | 100.00 | 49.00 | 98.00 | 195.00 | 65.00 | 10.00 | 188.00 | 45.00 | 22.00 | 159.00 | 217.00 | 401.50 | 198.00 | 75.00 | 10.00 | 19.00 | 193.00 | 201.00 |
+| **max** | 119.00 | 59.00 | 112.00 | 333.00 | 138.00 | 55.00 | 265.00 | 61.00 | 29.00 | 188.00 | 320.00 | 1018.00 | 268.00 | 135.00 | 22.00 | 41.00 | 206.00 | 211.00 |
+
+#### 🧐 Key Observations:
+
+1.  **Varying Scales:**
+    * The features exhibit vastly different scales. For instance, `scaled_variance_minor` has a mean of ~361 and a maximum value of 1018, while `max.length_aspect_ratio` has a mean of ~8.6 and a maximum of 55.
+    * This discrepancy is also clear in the standard deviation (`std`).
+
+2.  **Varying Variability:**
+    * The standard deviation (`std`) reveals how spread out the data is for each feature.
+    * `scaled_variance_minor` has an extremely high `std` (176.51), indicating its values are widely dispersed.
+    * In contrast, `pr.axis_rectangularity` has a very low `std` (2.59), meaning its values are tightly clustered around its mean.
+
+#### ⚖️ Implication for Modeling:
+
+The significant differences in both scale and variability across the features strongly suggest that **feature scaling is a mandatory preprocessing step.**
+
+Algorithms that are sensitive to feature magnitude (such as $k$-Nearest Neighbors, Support Vector Machines (SVMs), Principal Component Analysis (PCA), and Neural Networks) will be biased towards features with larger scales. Applying a scaler (like **StandardScaler** to normalize $z$-scores or **MinMaxScaler** to scale to a [0, 1] range) will ensure that all features contribute equally to the model's learning process.
 
 ---
 
@@ -95,12 +126,44 @@ This involves calculating summary statistics for the dataset without relying on 
 
 Focuses on analyzing one variable at a time to understand its distribution and detect outliers.
 
-* **Goal:** Summarize the variable's properties, confirm data types (`int64` and `float64`), and identify patterns.
+* **Goal:** Summarize the variable's properties, confirm data types (`int64`), and identify patterns.
 * **Initial Findings (Structural Check):**
-    * **Missing Values:** Confirmed **no missing values** across all 846 entries (except for one entry in `COMPACTNESS` from the `df.info()` output, which is negligible for 846 rows and all other columns being 846 non-null).
-    * **Data Types:** Most features are of integer type, suitable for direct scaling. The target variable `class` is an `object` (string/categorical).
-    * **Scale:** Features are on **vastly different scales** (e.g., `COMPACTNESS` mean $\approx 93$, `SCALED VARIANCE ALONG MINOR AXIS` mean $\approx 439$). This necessitates the **Scaling** step in preprocessing.
-* **Visualizations & Graphs:** Histograms, Box Plots, and Density Plots for each feature to confirm the skewness and outlier presence indicated by the descriptive statistics.
+    * **Missing Values:** Confirmed **no missing values** across all 846 entries. Every column is complete (846 non-null).
+    * **Data Types:** All 18 features are of integer type (`int64`), suitable for direct scaling. The target variable `class` is an `object` (string/categorical).
+    * **Scale:** Features are on **vastly different scales** (e.g., `compactness` mean ≈ 93.7, while `scaled_variance_minor` mean ≈ 361.4). This confirms that **Scaling** is a mandatory preprocessing step.
+* **Visualizations & Graphs:** Histograms, Box Plots, and Density Plots for each feature are required to visually confirm the skewness and outlier presence indicated by the descriptive statistics.
+
+* **Histograms:**
+  
+<img width="980" height="620" alt="image" src="https://github.com/user-attachments/assets/e17832af-d7a4-4f3d-9ca0-410b165e194e" />
+
+## 📊 Graphical Univariate Analysis: Histogram Insights
+
+This analysis examines the distribution of each of the 18 numerical features to identify their underlying shape, central tendency, and the presence of skewness or multiple modes. These shapes provide critical clues for feature selection and preprocessing.
+
+### Key Distributional Observations:
+
+The 18 features can be broadly categorized into three main groups based on their histogram shapes:
+
+* **🔔 1. Normally or Near-Normally Distributed Features (Symmetric)**
+    * **Features:** `compactness`, `circularity`, `distance_circularity`, `pr.axis_rectangularity`, `max.length_rectangularity`, `scaled_radius_of_gyration`, `skewness_major`.
+    * **Analysis:** These features display a (near) symmetric, bell-shaped distribution. Their mean, median, and mode are closely aligned at the center.
+    * **Implication:** These are well-behaved features that are ideal for many statistical models. They exhibit some variance but do not have extreme, one-sided outliers. `compactness` and `max.length_rectangularity` appear to be slightly left-skewed, but are still largely uni-modal and symmetric.
+
+* **📈 2. Skewed Features (Asymmetric)**
+    * **Features:**
+        * **Right-Skewed (Positively Skewed):** `radius_ratio`, `pr.axis_aspect_ratio`, `max.length_aspect_ratio`, `skewness_minor`, `kurtosis_minor`.
+        * **Left-Skewed (Negatively Skewed):** `kurtosis_major`.
+    * **Analysis:** These features show a strong asymmetry.
+    * For the **right-skewed** features (e.g., `max.length_aspect_ratio`), the majority of the data points are clustered at the lower end of the scale, with a long tail extending towards the right. This indicates that most vehicles have a low value for this feature, but a few vehicles have an extremely high value (potential outliers).
+    * For the **left-skewed** `kurtosis_major`, the tail extends to the left.
+    * **Implication:** For models sensitive to feature distributions (like some regression models), applying a transformation (e.g., Logarithmic or Square Root) to these skewed features could be beneficial to normalize them.
+
+* **⛰️ 3. Bimodal and Multimodal Features (Multiple Peaks)**
+    * **Features:** `scatter_ratio`, `elongatedness`, `scaled_variance_major`, `scaled_variance_minor`, `hollows_ratio`.
+    * **Analysis:** This is the most significant finding. These features display two or more distinct peaks, indicating that the data is not a single homogenous group.
+    * **Hypothesis:** These distinct peaks almost certainly correspond to the different **vehicle classes** (`car`, `bus`, `van`). For example, one peak in `elongatedness` might represent 'car' and 'van', while the other peak represents 'bus'.
+    * **Implication:** These features are **excellent candidates for classification**. They inherently contain information that separates the target classes and will likely be assigned high importance by machine learning models.
 
 ---
 
