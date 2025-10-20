@@ -253,6 +253,130 @@ The impact of these outliers can be both negative and positive:
 3.  **Test Model Robustness:** The presence of outliers forces us to choose more *robust* models. Tree-based models (like **Decision Trees** and **Random Forest**) are naturally immune to the impact of outliers. Robust scaling methods (like `RobustScaler`) can also be used to mitigate their negative impact.
 
 
+* **Feature Correlation Matrix/ Heat Map:**
+
+<img width="931" height="629" alt="image" src="https://github.com/user-attachments/assets/94434337-8b01-4548-b5d7-5d001020727b" />
+
+## 🔗 Bivariate Analysis: Correlation Heatmap Insights
+
+This heatmap visualizes the Pearson correlation coefficient between all 18 numerical features. The correlation matrix is a cornerstone of bivariate analysis, revealing which features move together and which are independent.
+
+* **Color Key:**
+    * 🔴 **Dark Red:** Strong positive correlation (approaching +1.0). When one feature increases, the other tends to increase.
+    * 🔵 **Dark Blue:** Strong negative correlation (approaching -1.0). When one feature increases, the other tends to decrease.
+    * ⚪ **White / Light:** No correlation (approaching 0.0). The features are linearly independent.
+
+### 🧠 Key Findings & Implications for Modeling:
+
+1.  **High Multicollinearity:**
+    * **Observation:** The heatmap reveals several "blocks" of dark red, indicating extremely high positive correlations ($r > 0.8$). This is known as **multicollinearity**.
+    * **Key Groups:**
+        * **Group A (Variance/Scatter):** `scatter_ratio`, `scaled_variance_major`, and `scaled_variance_minor` are all highly correlated with each other. They appear to measure a very similar underlying property of the silhouette (its "spread" or "variance").
+        * **Group B (Rectangularity/Circularity):** `pr.axis_rectangularity`, `max.length_rectangularity`, and `circularity` also show strong positive correlations.
+        * **Group C (Hollows):** `hollows_ratio` and `kurtosis_major` are strongly correlated.
+    * **Implication:** For many models (especially Linear/Logistic Regression), multicollinearity is a problem. It makes model coefficients unstable and hard to interpret. For feature selection, we should **avoid using all features from the same group**. For example, we should likely pick only *one* feature from Group A (e.g., `scatter_ratio`) and drop the other two, as they provide redundant information.
+
+2.  **Strong Inverse Relationships:**
+    * **Observation:** There is a very strong block of dark blue, centered around `elongatedness`.
+    * **Key Relationship:** `elongatedness` has a powerful *negative* correlation with `scatter_ratio`, `scaled_variance_major`, and `scaled_variance_minor`.
+    * **Implication:** This makes perfect physical sense: as a vehicle silhouette becomes more "elongated" (uzun), its "scatter ratio" (yayılımı) decreases. This reinforces the multicollinearity finding. `elongatedness` provides the *same* information as the features in Group A, just in an inverse manner. We should choose between `elongatedness` *or* one of the Group A features.
+
+3.  **Independent Features:**
+    * **Observation:** Some features form "white lines" or "white crosses" on the heatmap, indicating they have very low correlation (near 0) with most other features.
+    * **Key Features:** `skewness_major`, `skewness_minor`, `kurtosis_minor`, and `max.length_aspect_ratio`.
+    * **Implication:** These features are valuable because they provide **unique, independent information** that is not captured by any other feature. Even if their individual power to separate classes (seen in the box plots) was moderate or low, their independence makes them strong candidates to include in a multivariate model, as they contribute a unique perspective.
+  
+
+## 🔢 Bivariate Analysis: Mean Feature Values by Class
+
+This table provides a quantitative summary of the visual insights gained from the box plots. It calculates the exact mean (average) value for all 18 numerical features, grouped by the three vehicle classes.
+
+This analysis clearly reveals the *magnitude* of the differences between classes.
+
+| class | compactness | circularity | distance_circularity | radius_ratio | pr.axis_aspect_ratio | max.length_aspect_ratio | scatter_ratio | elongatedness | pr.axis_rectangularity | max.length_rectangularity | scaled_variance_major | scaled_variance_minor | scaled_radius_of_gyration | skewness_major | skewness_minor | kurtosis_minor | kurtosis_major | hollows_ratio |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 🚌 **bus** | 104.24 | 52.18 | 101.44 | 201.76 | 59.21 | 7.21 | 203.63 | 33.80 | 23.47 | 167.32 | 214.33 | 612.34 | 205.11 | 70.74 | 8.57 | 10.42 | 186.33 | 194.29 |
+| 🚗 **car** | 86.97 | 40.64 | 70.09 | 142.13 | 60.78 | 7.68 | 142.29 | 43.12 | 18.80 | 135.59 | 169.53 | 295.33 | 152.09 | 73.53 | 5.59 | 10.02 | 190.25 | 197.64 |
+| 🚐 **van** | 93.20 | 44.19 | 81.43 | 163.09 | 61.16 | 8.75 | 161.95 | 40.78 | 20.17 | 144.11 | 183.19 | 362.89 | 169.77 | 72.10 | 6.14 | 17.15 | 188.75 | 194.81 |
+
+#### 📖 Interpreting the Mean Values Table
+
+* **What this table represents:**
+It shows the average (mean) values for all 18 numerical features, broken down by the 3 distinct vehicle classes (`bus`, `car`, and `van`).
+
+* **In simpler terms:**
+This table provides a numerical answer to the questions:
+    * 🚌 "What does an average 'bus' look like?"
+    * 🚗 "What does an average 'car' look like?"
+    * 🚐 "What does an average 'van' look like?"
+ 
+#### 📊 Quantitative Insights from Mean Value Analysis:
+
+This table provides a numerical summary of the differences observed visually in the box plots.
+
+* **`elongatedness`:** 🚌 The mean value for a `bus` (33.80) is significantly lower than that of a `car` (43.12) or `van` (40.78). This indicates that 'bus' silhouettes are perceived as less "elongated" and confirms this feature is an excellent separator.
+
+* **`scatter_ratio`:** 🚌 The mean value for a `bus` (203.62) is substantially higher than for a `car` (142.28) or `van` (161.94). This also indicates high discriminatory power.
+
+* **`hollows_ratio`:** 📉 The mean values for `bus` (194.29), `car` (197.64), and `van` (194.81) are all extremely close to one another. This confirms that this feature is a weak separator.
+
+#### ✅ Conclusion:
+
+This table serves as a **numerical summary of the Box Plots**. It quantitatively confirms the differences we saw visually, providing clear evidence of which features are most important for classifying the vehicles.
+
+---
+
+### 🧐 Key Quantitative Insights:
+
+* **`elongatedness`:** The mean value for `bus` (33.80) is significantly lower than for `car` (43.12) or `van` (40.78). This confirms it as a powerful separator.
+* **`scatter_ratio` & `scaled_variance_minor`:** The `bus` class has exceptionally high mean values in these features (203.63 & 612.34) compared to the `car` class (142.29 & 295.33), which has the lowest.
+* **`hollows_ratio`:** The mean values are extremely close for all three classes (`bus`: 194.29, `car`: 197.64, `van`: 194.81), confirming this feature has very low discriminatory power.
+
+* **Pair Plot:**
+
+<img width="722" height="646" alt="image" src="https://github.com/user-attachments/assets/da6a6671-72a8-4508-b70a-168d27bf26f4" />
+
+## 🔬 Bivariate/Multivariate Analysis: Pairplot of Key Features
+
+This `pairplot` visualizes the interactions between our most promising features:
+1.  **`elongatedness`** (Strong separator)
+2.  **`scatter_ratio`** (Strong separator, but correlated with `elongatedness`)
+3.  **`skewness_minor`** (Independent feature, weak separator)
+
+The data points are colored by their `class` (🚌 `bus` = blue, 🚗 `car` = orange, 🚐 `van` = green), allowing us to see how well these features separate the classes, both individually and in combination.
+
+---
+
+### 1. Analysis of the Diagonal (KDE Plots)
+
+The diagonal of the plot shows the individual density (KDE) distribution of each feature, broken down by class.
+
+* **`elongatedness` (Top-left):** This confirms our `groupby()` analysis. The `bus` 🚌 (blue) class has a distinct, sharp peak at a low value (~34), while the `car` 🚗 (orange) and `van` 🚐 (green) classes have higher-value peaks that significantly overlap with each other.
+* **`scatter_ratio` (Middle-middle):** This plot is the *inverse* of `elongatedness`. The `bus` 🚌 (blue) class has a clear peak at a high value (~205), while `car` 🚗 (orange) and `van` 🚐 (green) have lower-value peaks that overlap.
+* **`skewness_minor` (Bottom-right):** This plot confirms why this is a *weak separator*. All three class distributions (blue, orange, and green) are almost perfectly on top of each other. This feature, by itself, provides little to no ability to distinguish between the vehicle types.
+
+---
+
+### 2. Analysis of the Off-Diagonal (Scatter Plots)
+
+These plots show the relationship between two features at a time.
+
+#### 📉 The Main Event: `scatter_ratio` vs. `elongatedness` (Top-Middle Plot)
+
+This is the most important chart in the matrix.
+* **Negative Correlation:** It perfectly visualizes the strong negative correlation (approx. -0.8) that the heatmap predicted. As `elongatedness` increases (moves to the right), `scatter_ratio` decreases (moves down).
+* **Excellent Class Separation:** This 2D view achieves what the 1D plots (on the diagonal) could not. The classes, which were previously overlapping, are now clearly separated into distinct clusters:
+    * **`bus` 🚌 (blue)** is isolated in the **top-left** (Low `elongatedness`, High `scatter_ratio`).
+    * **`car` 🚗 (orange)** is clustered in the **bottom-right** (High `elongatedness`, Low `scatter_ratio`).
+    * **`van` 🚐 (green)** sits **in the middle**, separating the other two classes.
+* **Implication:** This proves that while these two features are *redundant* (correlated), using them **together** provides superb classification power.
+
+#### ☁️ The Independent Feature: Plots with `skewness_minor`
+
+* **`elongatedness` vs. `skewness_minor` (Bottom-Left Plot):** The data points form a "vertical cloud." This visually confirms the **zero correlation** from the heatmap. The separation of classes (blue, orange, green) only happens along the X-axis (`elongatedness`), not the Y-axis (`skewness_minor`).
+* **`scatter_ratio` vs. `skewness_minor` (Middle-Right Plot):** The data points form a "horizontal cloud." This also confirms **zero correlation**. The separation of classes only happens along the X-axis (`scatter_ratio`), not the Y-axis (`skewness_minor`).
+* **Implication:** Adding `skewness_minor` to a model *may* help by providing a unique dimension of information (since it's not correlated), but it is not a strong separator on its own. The primary separation will come from the `elongatedness`/`scatter_ratio` relationship.
+
 ---
 
 ##### 3.2.1.4 Multivariate Analysis (Multiple Variables) 🌐
