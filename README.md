@@ -67,6 +67,6 @@ This project is best executed in a flexible environment like Google Colab or a J
 
 # 📚 Resources
 
-[EDA](https://github.com/hgabrali/EDA)
-[Masterschool-Math-Foundation](https://github.com/hgabrali/Masterschool-Math-Foundation)
-[Machine-Learning](https://github.com/hgabrali/Machine-Learning)
+* [EDA](https://github.com/hgabrali/EDA)
+* [Masterschool-Math-Foundation](https://github.com/hgabrali/Masterschool-Math-Foundation)
+* [Machine-Learning](https://github.com/hgabrali/Machine-Learning)
