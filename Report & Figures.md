@@ -11,7 +11,7 @@
 
 This section details the data selection process, initial data preparation, and subsequent analyses performed for this project.
 
-### 🗃️ Data Source & Preparation
+### 🗃️ Introduction: Data Source & Preparation
 
 For this project, two versions of the "Statlog (Vehicle Silhouettes)" dataset were evaluated to ensure the most robust and clean data source was used.
 
