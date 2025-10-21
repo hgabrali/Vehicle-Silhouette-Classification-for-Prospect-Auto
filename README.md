@@ -12,7 +12,7 @@ The primary goal of this project is to develop and evaluate a robust multiclass 
 * [3. Visual Summaries (Figures)](#3-visual-summaries-figures) 🖼️
     * [3.1. Performance Visuals](#31-performance-visuals) 📈
     * [3.2. Data Insights Visuals](#32-data-insights-visuals) 📊
-* [X](https://github.com/hgabrali/Vehicle-Silhouette-Classification-for-Prospect-Auto/blob/main/01_Final%20Analysis%20Report.md)
+* [Vehicle Classification: Final Analysis Report](https://github.com/hgabrali/Vehicle-Silhouette-Classification-for-Prospect-Auto/blob/main/01_Final%20Analysis%20Report.md)
 
 ## 🚀 Technical Context
  
