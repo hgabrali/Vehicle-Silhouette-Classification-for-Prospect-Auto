@@ -1,4 +1,4 @@
-# 🚗 Vehicle Classification Project: Report & Figures
+# 🚗 Vehicle Classification Project: Analysis  & Figures
 
 ## Table of Contents
 
