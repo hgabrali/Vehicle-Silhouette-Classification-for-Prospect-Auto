@@ -37,19 +37,72 @@ This file was chosen as the definitive data source because it represents a clean
 
 ---
 
-## 1. Final Model Performance Metrics
 
-A clear summary of how the chosen model performs on unseen data (test set or cross-validation).
+## 1. Final Model Performance Metrics 🎯
 
-| Metric | Purpose | Typical Use Case |
-| :--- | :--- | :--- |
-| **Accuracy** | Overall correctness of classification. | General classification tasks. |
-| **Precision** | Out of all positive predictions, how many were correct? | Minimizing False Positives (e.g., Spam detection). |
-| **Recall (Sensitivity)** | Out of all actual positives, how many were correctly identified? | Minimizing False Negatives (e.g., Disease prediction). |
-| **F1-Score** | Harmonic mean of Precision and Recall. | When an equal balance between P & R is needed. |
-| **ROC AUC** | Area under the Receiver Operating Characteristic curve. | Evaluating the model's ability to distinguish between classes. |
-| **R² (Coefficient of Determination)** | Proportion of the variance in the dependent variable that is predictable from the independent variables. | Regression tasks. |
-| **RMSE/MAE** | Root Mean Square Error / Mean Absolute Error. | Measuring the magnitude of prediction errors in regression. |
+## Post-Classification Metrics Applicability
+
+This table classifies the evaluation metrics discussed (Accuracy, Confusion Matrix, Classification Report, Feature Importance, and ROC Curve) against the four models trained in our analysis. It also includes the final accuracy score achieved by each model.
+
+| METRICS | Accuracy Score | Confusion Matrix | Classification Report (P/R/F1) | Feature Importance | ROC Curve / AUC |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Random Forest** | **0.9588** | ✅ **Yes** | ✅ **Yes** | ✅ **Yes** <br/> (from `.feature_importances_`) | ✅ **Yes** <br/> (via `.predict_proba`) |
+| **Logistic Regression** | 0.9353 | ✅ **Yes** | ✅ **Yes** | ✅ **Yes** <br/> (from `.coef_`) | ✅ **Yes** <br/> (via `.predict_proba`) |
+| **k-Nearest Neighbors (kNN)** | 0.9176 | ✅ **Yes** | ✅ **Yes** | ❌ **No** <br/> (Not directly applicable) | ✅ **Yes** <br/> (via `.predict_proba`) |
+| **Decision Tree** | 0.8765 | ✅ **Yes** | ✅ **Yes** | ✅ **Yes** <br/> (from `.feature_importances_`) | ✅ **Yes** <br/> (via `.predict_proba`) |
+
+### Key Interpretations of this Table:
+
+* **Accuracy, Confusion Matrix, & Classification Report:** These metrics are universal. Since all models generate predictions (`.predict()`), we can always compare them to the true labels (`y_test`) to generate these reports.
+* **ROC Curve / AUC:** This metric requires probability scores (`.predict_proba()`) rather than just final predictions. All four models we selected are capable of producing these probabilities, making them suitable for ROC analysis.
+* **Feature Importance:** This is the main differentiator.
+    * **Random Forest** and **Decision Tree** models have a built-in `.feature_importances_` attribute, which makes it easy to see which features were most decisive.
+    * **Logistic Regression** provides feature importance through its `.coef_` (coefficients). The magnitude of the coefficient (after scaling) signifies importance.
+    * **k-Nearest Neighbors (kNN)** does *not* have a direct feature importance metric. It is a "lazy learner" or "non-parametric" model that doesn't learn "weights" for features; it simply uses all features to calculate distances.
+---
+
+### Preprocessing Pipeline
+
+The data was prepared for modeling using the following pipeline:
+
+1.  **Data Split:** The dataset (846 samples) was split into training (80%) and testing (20%) subsets.
+    * Training Set: `(676, 18)`
+    * Testing Set: `(170, 18)`
+2.  **Imputation:** The `df.info()` check in Phase 1 revealed missing `NaN` values. `SimpleImputer(strategy='median')` was used to fill these gaps, ensuring no data was lost.
+3.  **Scaling:** All features were scaled using `StandardScaler`. The scaler was `fit` **only** on the training data and then used to `transform` both the training and test sets. This prevents data leakage and ensures models like Logistic Regression and kNN perform optimally.
+
+---
+
+
+Four distinct classification models were trained on the preprocessed training data and evaluated on the unseen test data. The primary metric for evaluation is **Accuracy**.
+
+The final performance metrics are as follows:
+
+| Model | Test Accuracy (Score) | Test Accuracy (%) |
+| :--- | :---: | :---: |
+| **Random Forest** | **0.9588** | **95.88%** |
+| Logistic Regression | 0.9353 | 93.53% |
+| k-Nearest Neighbors (k=5) | 0.9176 | 91.76% |
+| Decision Tree | 0.8765 | 87.65% |
+
+---
+
+## 2. Key Findings and Interpretations 💡
+
+Based on the performance metrics, several key insights can be drawn:
+
+* **Best Overall Model:** **Random Forest** is the clear winner, achieving the highest test accuracy of **~95.9%**. This strongly suggests that the relationships between the vehicle features and their classes are complex and non-linear. The ensemble nature of Random Forest (using multiple decision trees) excels at capturing these patterns while avoiding the overfitting seen in a single Decision Tree.
+
+* **Ensemble vs. Single Tree:** The performance gap between Random Forest (95.9%) and the single Decision Tree (87.7%) is significant. This highlights the weakness of a single tree, which likely overfit the training data. The Random Forest successfully generalizes by averaging the predictions of many decorrelated trees.
+
+* **Linear Model Strength:** `LogisticRegression` performed exceptionally well (93.5%), which is somewhat surprising for a complex, multi-class problem. This high performance indicates that the `StandardScaler` was highly effective and that many of the features, when combined, *do* provide significant linear separability between the classes.
+
+* **Feature Space Viability:** The `k-Nearest Neighbors` model's strong performance (91.8%) confirms that the preprocessing pipeline was successful. It shows that in the scaled 18-dimensional feature space, vehicles of the same class cluster together, making "distance" a meaningful metric for classification.
+
+
+
+
+# DÜZENLENECEK!!!!
 
 ## 2. Key Findings and Interpretations 🧠
 
@@ -66,7 +119,174 @@ Visualizations are essential for quick comprehension and communicating complex r
 ### 3.1. Performance Visuals
 
 * **Confusion Matrix:** A table visualizing the performance of a classification model. It clearly shows True Positives, True Negatives, False Positives, and False Negatives.
-* **ROC Curve:** Graphically represents the trade-off between the True Positive Rate and the False Positive Rate at various threshold settings.
+
+<img width="967" height="741" alt="image" src="https://github.com/user-attachments/assets/4b268c4d-97bb-469f-b3a2-fa78504881f1" />
+
+
+# 📊 Confusion Matrix: Comparative Analysis
+
+The confusion matrices provide a deep insight into each model's performance beyond simple accuracy. They reveal *how* and *where* the models are making mistakes by showing the count of true vs. predicted labels for each class.
+
+Here is a comparative analysis based on the generated plots:
+
+| Model 🤖 | Overall Performance & Key Strengths 🎯 | Key Confusion Points (Weaknesses) ⚠️ |
+| :--- | :--- | :--- |
+| **Random Forest** | **🥇 (Winner)**. This model is the most accurate and balanced. It identified `car` and `bus` classes almost perfectly (84/86 cars, 41/42 buses correct). | Its only notable weakness is misclassifying **4 'van'** samples as **'bus'**. This suggests `van` and `bus` silhouettes are still difficult to separate. |
+| **Logistic Regression** | **🥈 (Strong Runner-Up)**. Excellent performance. It identifies the `car` class very well (82/86 correct). Its performance is nearly on par with Random Forest. | Has the same weakness as Random Forest: confuses `van` and `bus`. It misclassified **4 'bus'** as **'van'** and **3 'van'** as **'bus'**. |
+| **k-Nearest Neighbors** | ** respectable.** Similar to Logistic Regression, it identifies `bus` and `car` classes well (38/42 buses, 82/86 cars correct). | This model struggles the most with the **'van'** class. It misclassified **6 'van'** samples as **'bus'**, which is the highest error rate for that specific confusion. |
+| **Decision Tree** | **(Weakest Model)**. This model shows significant confusion across all classes and is clearly the poorest performer. | It struggles badly with the `car` class, misclassifying **6 as 'bus'** and **5 as 'van'**. It also confuses `bus` with `van` (4) and `van` with `bus` (4). |
+
+---
+
+### 💡 Summary Interpretation
+
+1.  **The 'Car' Class:** The `car` class is the most distinct and easiest to identify. All models except the single Decision Tree performed very well on it.
+2.  **The 'Bus/Van' Problem:** The most common error across *all four models* is the confusion between `bus` and `van`. This strongly implies that the visual features (silhouettes) of buses and vans in this dataset are very similar.
+3.  **Model Superiority:** The **Random Forest** model is superior not just because it has the highest accuracy, but because it minimizes this `bus/van` confusion better than any other model.
+
+---
+
+# 📈 Classification Report: Comparative Analysis
+
+### 📈 Detailed Classification Reports (All Models)
+
+This output shows the full, detailed performance breakdown for each of the four models trained on the test set.
+
+=========================================
+     Report for: Logistic Regression
+=========================================
+              precision    recall  f1-score   support
+
+         bus       0.89      0.95      0.92        44
+         car       0.97      0.91      0.94        86
+         van       0.91      0.97      0.94        40
+
+    accuracy                           0.94       170
+   macro avg       0.93      0.95      0.93       170
+weighted avg       0.94      0.94      0.94       170
+
+
+=========================================
+     Report for: k-Nearest Neighbors (k=5)
+=========================================
+              precision    recall  f1-score   support
+
+         bus       0.95      0.95      0.95        44
+         car       0.93      0.91      0.92        86
+         van       0.86      0.90      0.88        40
+
+    accuracy                           0.92       170
+   macro avg       0.91      0.92      0.92       170
+weighted avg       0.92      0.92      0.92       170
+
+
+=========================================
+     Report for: Decision Tree
+=========================================
+              precision    recall  f1-score   support
+
+         bus       0.82      0.91      0.86        44
+         car       0.90      0.87      0.89        86
+         van       0.89      0.85      0.87        40
+
+    accuracy                           0.88       170
+   macro avg       0.87      0.88      0.87       170
+weighted avg       0.88      0.88      0.88       170
+
+
+=========================================
+     Report for: Random Forest
+=========================================
+              precision    recall  f1-score   support
+
+         bus       0.96      0.98      0.97        44
+         car       0.98      0.94      0.96        86
+         van       0.93      0.97      0.95        40
+
+    accuracy                           0.96       170
+   macro avg       0.95      0.96      0.96       170
+weighted avg       0.96      0.96      0.96       170
+
+The `classification_report` provides a class-by-class breakdown of model performance, moving beyond the overall accuracy score. We analyze **Precision**, **Recall**, and **F1-Score** for each model to understand their specific strengths and weaknesses.
+
+* **Precision:** *Of all the times the model predicted a class (e.g., "bus"), what percentage was correct?* (High precision = low false positives).
+* **Recall :** *Of all the actual samples of a class (e.g., all real "bus" samples), what percentage did the model find?* (High recall = low false negatives).
+* **F1-Score:** The harmonic mean of Precision and Recall. This is the best metric for comparing balanced performance, especially for the individual classes.
+
+### Model Performance Summary (F1-Scores by Class)
+
+This table summarizes the F1-Score for each class, which is the most informative metric for comparing performance.
+
+| Model 🤖 | `bus` (F1-Score) | `car` (F1-Score) | `van` (F1-Score) | Overall Accuracy 🎯 |
+| :--- | :---: | :---: | :---: | :---: |
+| **Random Forest** | **0.97** | **0.96** | **0.95** | **0.96** |
+| **Logistic Regression** | 0.92 | 0.94 | 0.94 | 0.94 |
+| **k-Nearest Neighbors** | 0.95 | 0.92 | 0.88 | 0.92 |
+| **Decision Tree** | 0.86 | 0.89 | 0.87 | 0.88 |
+
+---
+
+### 💡 Detailed Insights and Interpretation
+
+1.  **🥇 Random Forest (The Clear Winner):**
+    * This model is superior in every single metric. It achieves an F1-Score of $0.95$ or higher for *all three* classes, indicating a robust and well-balanced model.
+    * Its lowest score, `van` ($0.95$), is still higher than the best scores of the other models. This confirms the finding from the Confusion Matrix: it handles the difficult `bus/van` confusion exceptionally well.
+
+2.  **🥈 Logistic Regression (Strong & Balanced):**
+    * This model shows excellent, balanced performance with F1-Scores of $0.92$ - $0.94$ across the board.
+    * **Key Insight:** Its Recall for `bus` ($0.95$) and `van` ($0.97$) is very high, meaning it is very good at *finding* all the actual buses and vans. However, its Precision for `bus` ($0.89$) shows it sometimes *incorrectly labels* other vehicles as `bus` (as seen in the confusion matrix).
+
+3.  **🥉 k-Nearest Neighbors (Good, but with a Weakness):**
+    * kNN is strong at identifying the `bus` ($0.95$) and `car` ($0.92$) classes.
+    * **Key Insight:** Its main weakness is clearly the `van` class, which has a significantly lower F1-Score ($0.88$). It has low Precision ($0.86$) for `van`, confirming that it frequently misclassifies other vehicles (specifically `bus`) *as* `van`.
+
+4.  **Decision Tree (The Underperformer):**
+    * This model is the weakest, with F1-Scores below $0.90$ for all classes.
+    * It struggles most with the `bus` class (F1-Score $0.86$). This report confirms the findings from the Confusion Matrix: the single tree is not complex enough (or is overfit) and makes significant errors across all categories.
+
+---
+# 🧠 Feature Importance: Comparative Analysis
+
+<img width="782" height="502" alt="image" src="https://github.com/user-attachments/assets/1b790584-250f-4454-9cd5-fa3d9a1e378e" />
+<img width="782" height="495" alt="image" src="https://github.com/user-attachments/assets/580022d3-e479-405b-a26f-8c46e9d6572c" />
+<img width="803" height="493" alt="image" src="https://github.com/user-attachments/assets/56703ad3-bb75-4e8c-a1a6-bc3fe003f289" />
+
+This analysis examines *which* features each model used to make its decisions. This helps us understand *why* one model outperformed another. The importance metrics are different for each model type:
+
+* **Tree-Based (Random Forest, Decision Tree):** Uses "Gini Importance" – how much a feature helps in reducing the impurity of the data splits.
+* **Linear (Logistic Regression):** Uses "Mean Absolute Coefficient" – the average magnitude of a feature's weight across all classes, indicating its influence on the decision boundary.
+
+### Comparative Interpretation Table
+
+| Model 🤖 | Top 5 Key Features (in order) 🔑 | Analysis & Interpretation 🧠 |
+| :--- | :--- | :--- |
+| **Random Forest** 🥇 | 1. `scaled_variance.1`<br>2. `pr.axis_rectangularity`<br>3. `scaled_radius_of_gyration`<br>4. `scatter_ratio`<br>5. `circularity` | **Balanced & Robust.** The importance is distributed across many features. While `scaled_variance.1` is the most important, several other features play a significant role. This shows the model is using a "wisdom of the crowd" approach, combining many weak predictors to create one strong one. This is why it's so accurate and avoids overfitting. |
+| **Decision Tree** 🌳 | 1. `scaled_variance.1` (Dominant)<br>2. `pr.axis_rectangularity`<br>3. `scaled_radius_of_gyration`<br>4. `compactness`<br>5. `scatter_ratio` | **Over-Reliant.** The model is *heavily* dependent on a single feature (`scaled_variance.1`), which has an importance score of over 0.5. This is a classic weakness of a single tree; it finds one "killer" feature and bases most of its logic on it. This explains why its performance is lower—it's not as nuanced as the Random Forest. |
+| **Logistic Regression** 📈 | 1. `pr.axis_aspect_ratio`<br>2. `elongatedness`<br>3. `scaled_variance.1`<br>4. `compactness`<br>5. `scatter_ratio` | **Different Perspective (Linear).** The linear model finds *different* features to be important! It values `pr.axis_aspect_ratio` and `elongatedness` the most. This suggests these features have the strongest *linear* relationship with the classes. The tree models, which can capture non-linear patterns, valued them less. |
+
+---
+
+### 💡 Summary Findings
+
+1.  **Universal Feature:** `scaled_variance.1` is clearly the single most predictive feature, as it appears in the Top 3 for *all* models.
+2.  **Different Thinking:** The tree-based models (RF, DT) and the linear model (LR) "think" differently. The trees found `pr.axis_rectangularity` highly important, while the linear model found `pr.axis_aspect_ratio` more important.
+3.  **Why Random Forest Won:** The RF plot confirms *why* it's the best model. It learns from the most important features (like the Decision Tree) but *balances* their influence, preventing over-reliance on any single one. It creates a more holistic and stable decision-making process.
+
+# 📊 Analysis of the Model Performance Comparison Graph
+
+<img width="583" height="348" alt="image" src="https://github.com/user-attachments/assets/6aae0722-a639-4f64-ad0a-a6af639233fa" />
+
+
+| Question | Answer |
+| :--- | :--- |
+| **What is this?** 🤔 | This is a bar chart that provides a simple, direct summary of the final results from our Phase 2 modeling. |
+| **What it Shows** 📈 | It plots the final **Test Accuracy** score for all four trained models (Random Forest, Logistic Regression, kNN, and Decision Tree) side-by-side, sorted from best to worst. |
+| **What Question it Answers** ❓ | It directly answers the question: **"Which model performed the best, and how do they all compare at a single glance?"** |
+
+
+* **ROC Curves for All Models:**
+
+
 * **Residuals Plot (for Regression):** Used to check the homoscedasticity and normality assumptions of the regression model errors.
 
 ### 3.2. Data Insights Visuals
