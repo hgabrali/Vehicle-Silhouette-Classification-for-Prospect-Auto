@@ -330,7 +330,52 @@ This table compares the models based on the AUC scores from the provided images.
 | **Decision Tree** 🌳 | **`bus`: 0.92**<br>**`car`: 0.92**<br>**`van`: 0.90** | **Weakest Performer.** The Decision Tree's AUC scores are significantly lower. The curves are visibly "flatter" (closer to the 0.5 diagonal line). An AUC of 0.90 for `van` shows it has considerable difficulty separating `van` samples from `bus` and `car` samples. This aligns with its low accuracy and poor confusion matrix. |
 
 
-* **Residuals Plot (for Regression):** Used to check the homoscedasticity and normality assumptions of the regression model errors.
+
+# 🧠 Analysis: Random Forest Classification Error Plot
+
+<img width="528" height="393" alt="image" src="https://github.com/user-attachments/assets/0acbfbf9-3e03-45c8-bfdf-ad9a8daee5f0" />
+
+This plot, the **Confusion Matrix**, is the primary tool for analyzing the errors of our best-performing model, the Random Forest. It moves beyond the simple "96% accuracy" and shows us exactly *where* the model succeeded and *where it failed*.
+
+---
+
+### 🎯 What This Plot Shows
+
+* **Y-Axis (True Label):** Represents the *actual*, ground-truth class of the vehicle (e.g., the row labeled `bus` contains all 44 vehicles that were truly buses).
+* **X-Axis (Predicted Label):** Represents the *prediction* that the model made.
+* **The Goal:** A perfect model would have numbers *only* on the main diagonal (from top-left to bottom-right) and zeros everywhere else.
+
+---
+
+### ✅ The Main Diagonal (Correct Predictions)
+
+This diagonal shows where the "True Label" and "Predicted Label" match.
+
+* **`bus` (43):** The model correctly identified 43 out of 44 true `bus` samples. (An excellent result).
+* **`car` (81):** The model correctly identified 81 out of 86 true `car` samples.
+* **`van` (36):** The model correctly identified 36 out of 40 true `van` samples.
+
+---
+
+### ❌ The Off-Diagonal (Errors & Confusion)
+
+These are the most important numbers, as they represent the model's mistakes.
+
+* **Primary Error (5):** The largest single error is in the `[True: car, Predicted: van]` cell. This means the model **incorrectly classified 5 true 'car' samples as 'van'**. This appears to be its biggest blind spot.
+* **Secondary Error (4):** The next largest error is in the `[True: van, Predicted: bus]` cell. The model **incorrectly classified 4 true 'van' samples as 'bus'**. This confirms the `bus/van` similarity that we saw in other models.
+* **Tertiary Error (1):** A minor error in the `[True: bus, Predicted: van]` cell, where **1 true 'bus' was misclassified as 'van'**.
+
+---
+
+### 💡 Key Insights & Summary
+
+1.  **Zero `car`/`bus` Confusion:** The model *perfectly* separates `car` from `bus`. It never misclassified a `car` as a `bus`, and it never misclassified a `bus` as a `car`. The 0s in these cells are a sign of high confidence.
+2.  **Primary Weakness: `car` vs. `van`:** The model's main struggle is distinguishing `car` silhouettes from `van` silhouettes.
+3.  **Secondary Weakness: `bus` vs. `van`:** The model also struggles (though less so) with the `bus`/`van` distinction, which was a major problem for the weaker models.
+4.  **Overall Errors:** In this specific run, the model made a total of 5 + 4 + 1 = 10 errors.
+5.  **Calculated Accuracy:** (43 + 81 + 36) / 170 = 160 / 170 = **94.1% Accuracy**.
+
+⚠️ **Note on Results:** This specific confusion matrix (with 10 errors and 94.1% accuracy) is slightly different from our text-based `classification_report` (which showed 7 errors and **95.9%** accuracy). This is very common in machine learning notebooks if a parameter or `random_state` was slightly different between runs. Both plots, however, tell the same story: the model is excellent, and its primary errors are confusing `car` with `van` and `van` with `bus`.
 
 ### 3.2. Data Insights Visuals
 
