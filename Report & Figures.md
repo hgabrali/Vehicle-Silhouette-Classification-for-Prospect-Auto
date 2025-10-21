@@ -286,6 +286,49 @@ This analysis examines *which* features each model used to make its decisions. T
 
 * **ROC Curves for All Models:**
 
+<img width="569" height="491" alt="image" src="https://github.com/user-attachments/assets/ef3b8af4-9702-4468-a53c-4e818e8ff3e7" />
+
+<img width="610" height="527" alt="image" src="https://github.com/user-attachments/assets/2374a1f9-ccc0-44ea-94d1-90135090109c" />
+
+<img width="567" height="502" alt="image" src="https://github.com/user-attachments/assets/81f02493-845f-428e-a1cb-c38f2c57fea8" />
+
+<img width="626" height="494" alt="image" src="https://github.com/user-attachments/assets/0286f38c-d67a-4edc-9114-4c782abacc8f" />
+
+# ⚡ Analysis of One-vs-Rest (OvR) ROC Curves
+
+This report analyzes the ROC (Receiver Operating Characteristic) curves for our four classification models. The key metric here is the **AUC (Area Under the Curve)**, which measures a model's ability to distinguish between classes.
+
+* **AUC = 1.0:** Perfect model.
+* **AUC = 0.5:** No-skill model (equivalent to random guessing).
+
+---
+
+### Why Are There Three Separate Curves Per Plot? The "One-vs-Rest" (OvR) Approach
+
+Before the comparison, it's critical to understand *why* each plot has three curves.
+
+1.  **ROC is Binary:** A standard ROC curve is designed for **binary** (two-class) problems (e.g., "Yes" vs. "No").
+2.  **Our Problem is Multiclass:** We have **three** classes: `bus`, `car`, and `van`. We cannot plot a single ROC curve for this.
+3.  **The Solution (OvR):** We re-frame the problem as three separate binary classification tasks:
+    * **Curve 1 (bus vs. Rest):** How well does the model distinguish `bus` from (`car` + `van`)?
+    * **Curve 2 (car vs. Rest):** How well does the model distinguish `car` from (`bus` + `van`)?
+    * **Curve 3 (van vs. Rest):** How well does the model distinguish `van` from (`bus` + `car`)?
+
+A model with high AUC scores for all three classes (all curves hugging the top-left corner) is an excellent and robust classifier.
+
+---
+
+### 📈 Comparative ROC/AUC Analysis
+
+This table compares the models based on the AUC scores from the provided images.
+
+| Model 🤖 | AUC Scores (Class-by-Class) 💯 | Analysis & Interpretation 💡 |
+| :--- | :--- | :--- |
+| **Random Forest** 🥇 | **`bus`: 1.00**<br>**`car`: 1.00**<br>**`van`: 1.00** | **Perfect Separator.** This is an exceptional result. An AUC of 1.00 for all classes means the model has a perfect ability to distinguish each class from the others at the probability level. The curves are "ideal," perfectly hugging the top-left corner. |
+| **Logistic Regression** 🥈 | **`bus`: 0.99**<br>**`car`: 0.99**<br>**`van`: 0.99** | **Extremely Strong.** With AUC scores of 0.99 across the board, this model is also a top-tier separator. It has an outstanding ability to distinguish all three classes, performing nearly as perfectly as the Random Forest. |
+| **k-Nearest Neighbors** 🥉 | **`bus`: 0.99**<br>**`car`: 0.98**<br>**`van`: 0.96** | **Very Strong, with One Weakness.** This model shows excellent separability for `bus` (0.99) and `car` (0.98). However, its AUC for `van` (0.96) is slightly lower. This confirms our findings from the Confusion Matrix: the `van` class is the most difficult for the kNN model to confidently distinguish. |
+| **Decision Tree** 🌳 | **`bus`: 0.92**<br>**`car`: 0.92**<br>**`van`: 0.90** | **Weakest Performer.** The Decision Tree's AUC scores are significantly lower. The curves are visibly "flatter" (closer to the 0.5 diagonal line). An AUC of 0.90 for `van` shows it has considerable difficulty separating `van` samples from `bus` and `car` samples. This aligns with its low accuracy and poor confusion matrix. |
+
 
 * **Residuals Plot (for Regression):** Used to check the homoscedasticity and normality assumptions of the regression model errors.
 
