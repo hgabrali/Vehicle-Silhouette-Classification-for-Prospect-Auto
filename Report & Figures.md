@@ -1,4 +1,13 @@
-## 📊 Report & Figures
+# 🚗 Vehicle Classification Project: Report & Figures
+
+## Table of Contents
+
+* [Introduction: Data Source & Preparation](#introduction-data-source--preparation) 📄⚙️
+* [1. Final Model Performance Metrics](#1-final-model-performance-metrics) 🎯
+* [2. Key Findings and Interpretations](#2-key-findings-and-interpretations) 💡
+* [3. Visual Summaries (Figures)](#3-visual-summaries-figures) 🖼️
+    * [3.1. Performance Visuals](#31-performance-visuals) 📈
+    * [3.2. Data Insights Visuals](#32-data-insights-visuals) 📊
 
 This section details the data selection process, initial data preparation, and subsequent analyses performed for this project.
 
