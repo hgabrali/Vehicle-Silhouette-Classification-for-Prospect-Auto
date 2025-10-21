@@ -55,7 +55,7 @@ This project follows a standard supervised machine learning workflow, focusing o
     * Analyze the distribution of the target variable (`class`) to check for **class imbalance**.
     * Visualize feature distributions (histograms) and relationships between features and the target class.
 
-### Phase 2: Data Preprocessing and Modeling
+### Phase 2: Data Preprocessing and Modeling 
 
 1.  **Data Preparation:** Prepare the data for modeling: ⚙️
     * Separate features ($\mathbf{X}$) from the target ($\mathbf{y}$).
