@@ -120,6 +120,15 @@ The significant differences in both scale and variability across the features st
 
 Algorithms that are sensitive to feature magnitude (such as $k$-Nearest Neighbors, Support Vector Machines (SVMs), Principal Component Analysis (PCA), and Neural Networks) will be biased towards features with larger scales. Applying a scaler (like **StandardScaler** to normalize $z$-scores or **MinMaxScaler** to scale to a [0, 1] range) will ensure that all features contribute equally to the model's learning process.
 
+<img width="741" height="455" alt="image" src="https://github.com/user-attachments/assets/6630bca1-bd15-4092-8606-35d701250f9c" />
+
+
+<img width="755" height="480" alt="image" src="https://github.com/user-attachments/assets/b8b0c401-6ae9-4d5a-b670-e7138dc9aef2" />
+
+<img width="870" height="543" alt="image" src="https://github.com/user-attachments/assets/b9ab9973-f7c9-458d-b735-fc7fe1f67989" />
+
+<img width="771" height="462" alt="image" src="https://github.com/user-attachments/assets/8c0b8582-7223-47a9-a7bc-d2f56db07bf1" />
+
 ---
 
 ##### 3.2.1.2. Univariate Analysis (Single Variable) 📉
